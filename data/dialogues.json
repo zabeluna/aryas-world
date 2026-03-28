@@ -1,0 +1,98 @@
+{
+  "dog_1": {
+    "speaker": "Rex (cachorro vira-lata)",
+    "text": "Au au! Cuidado com os carros na próxima rua! Eles são muito rápidos.",
+    "choices": [
+      { "label": "Obrigada, vou tomar cuidado!", "next": "dog_1b" },
+      { "label": "Não tenho medo de nada!", "next": "dog_1c" }
+    ]
+  },
+  "dog_1b": {
+    "speaker": "Rex (cachorro vira-lata)",
+    "text": "Boa sorte, Arya! A vovó está te esperando com biscoitinhos! 🐾",
+    "choices": []
+  },
+  "dog_1c": {
+    "speaker": "Rex (cachorro vira-lata)",
+    "text": "Hm... coragem é bom, mas cuidado é melhor. Cuide-se!",
+    "choices": []
+  },
+
+  "dog_2": {
+    "speaker": "Bolinha (poodle)",
+    "text": "Oi Arya! Eu conheço um atalho! Quer que eu te mostre?",
+    "choices": [
+      { "label": "Sim, me mostra!", "next": "dog_2b" },
+      { "label": "Não, obrigada.", "next": "dog_2c" }
+    ]
+  },
+  "dog_2b": {
+    "speaker": "Bolinha (poodle)",
+    "text": "Passa pelo parque ali do lado! Tem menos carros e tem galhos pelo caminho!",
+    "choices": []
+  },
+  "dog_2c": {
+    "speaker": "Bolinha (poodle)",
+    "text": "Tudo bem! Boa sorte na sua aventura! Au au!",
+    "choices": []
+  },
+
+  "person_1": {
+    "speaker": "Dona Maria",
+    "text": "Que cachorra linda! Está perdida, minha filha?",
+    "choices": [
+      { "label": "Não! Vou à casa da minha vovó.", "next": "person_1b" },
+      { "label": "Au! (Sem resposta)", "next": "person_1c" }
+    ]
+  },
+  "person_1b": {
+    "speaker": "Dona Maria",
+    "text": "Que fofo! A casa da vovó fica ali na esquina, depois do semáforo. Bom caminho!",
+    "choices": []
+  },
+  "person_1c": {
+    "speaker": "Dona Maria",
+    "text": "Cachorros... nunca explicam nada. Vai com Deus, bichinha!",
+    "choices": []
+  },
+
+  "person_2": {
+    "speaker": "João (ciclista)",
+    "text": "Ei, cachorrinha! Cuidado com aquele caminhão vermelho, ele não para no sinal!",
+    "choices": [
+      { "label": "Obrigada pelo aviso!", "next": "person_2b" },
+      { "label": "Qual caminhão?", "next": "person_2c" }
+    ]
+  },
+  "person_2b": {
+    "speaker": "João (ciclista)",
+    "text": "De nada! Use seu desvio rápido se ele aparecer. Boa sorte!",
+    "choices": []
+  },
+  "person_2c": {
+    "speaker": "João (ciclista)",
+    "text": "O vermelho! Ele fica rodando pela avenida principal. Fique esperta!",
+    "choices": [
+      { "label": "Entendi, obrigada!", "next": "person_2b" }
+    ]
+  },
+
+  "person_3": {
+    "speaker": "Vovó 🏠",
+    "text": "ARYA! Minha netinha favorita chegou! Trouxe galhinhos pra brincar?",
+    "choices": [
+      { "label": "Trouxe sim, vovó! (vitória)", "next": "person_3b" },
+      { "label": "Não trouxe... (sem galhos)", "next": "person_3c" }
+    ]
+  },
+  "person_3b": {
+    "speaker": "Vovó 🏠",
+    "text": "Que cachorra boa! Entra que tem biscoito te esperando! Você conseguiu! 🎉",
+    "choices": []
+  },
+  "person_3c": {
+    "speaker": "Vovó 🏠",
+    "text": "Tudo bem, o importante é você ter chegado! Entra, meu amor! 🎉",
+    "choices": []
+  }
+}
