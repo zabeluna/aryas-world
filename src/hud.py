@@ -7,13 +7,17 @@ class HUD:
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.SysFont(None, 26)
+        self.show_inventory = False
+
+    def toggle_inventory(self):
+        self.show_inventory = not self.show_inventory
 
     def draw(self, player, inventory):
         # ── Barra de HP ──────────────────────────────────────────
         bar_w = 160
         bar_h = 18
         hp_ratio = player.hp / player.max_hp
-        pygame.draw.rect(self.screen, (80, 0, 0),   (10, 10, bar_w, bar_h))
+        pygame.draw.rect(self.screen, (80, 0, 0),    (10, 10, bar_w, bar_h))
         pygame.draw.rect(self.screen, (220, 50, 50), (10, 10, int(bar_w * hp_ratio), bar_h))
         pygame.draw.rect(self.screen, (255,255,255), (10, 10, bar_w, bar_h), 1)
         hp_text = self.font.render(f"HP: {player.hp}", True, (255, 255, 255))
@@ -21,17 +25,54 @@ class HUD:
 
         # ── Galhos coletados ─────────────────────────────────────
         sticks = inventory.count("Galho")
-        stick_text = self.font.render(f"🌿 Galhos: {sticks}", True, (255, 230, 100))
+        stick_text = self.font.render(f"Galhos: {sticks}", True, (255, 230, 100))
         self.screen.blit(stick_text, (10, 36))
 
-        # ── Cooldown da Skill ─────────────────────────────────────
+        # ── Cooldown da Skill ────────────────────────────────────
         cd = player.dash_cooldown_timer
         cd_ratio = 1.0 - (cd / DASH_COOLDOWN) if cd > 0 else 1.0
         cd_w = 100
         cd_h = 12
-        pygame.draw.rect(self.screen, (30, 30, 80),   (10, 60, cd_w, cd_h))
-        pygame.draw.rect(self.screen, (80, 80, 255),  (10, 60, int(cd_w * cd_ratio), cd_h))
-        pygame.draw.rect(self.screen, (200,200,255),  (10, 60, cd_w, cd_h), 1)
+        pygame.draw.rect(self.screen, (30, 30, 80),  (10, 60, cd_w, cd_h))
+        pygame.draw.rect(self.screen, (80, 80, 255), (10, 60, int(cd_w * cd_ratio), cd_h))
+        pygame.draw.rect(self.screen, (200,200,255), (10, 60, cd_w, cd_h), 1)
         cd_label = self.font.render("DASH [SPC]", True,
-                                    (255, 255, 255) if cd == 0 else (150, 150, 255))
+                                    (255,255,255) if cd == 0 else (150,150,255))
         self.screen.blit(cd_label, (116, 58))
+
+        # ── Dica inventário ──────────────────────────────────────
+        inv_hint = self.font.render("[L] Inventario", True, (200, 200, 200))
+        self.screen.blit(inv_hint, (10, 80))
+
+        # ── Tela de inventário ───────────────────────────────────
+        if self.show_inventory:
+            self._draw_inventory(inventory)
+
+    def _draw_inventory(self, inventory):
+        overlay = pygame.Surface((300, 360), pygame.SRCALPHA)
+        overlay.fill((20, 20, 40, 220))
+        self.screen.blit(overlay, (250, 110))
+        pygame.draw.rect(self.screen, (150, 150, 255), (250, 110, 300, 360), 2)
+
+        title_font = pygame.font.SysFont(None, 34)
+        title = title_font.render("Inventario [L]", True, (255, 230, 100))
+        self.screen.blit(title, (268, 122))
+        pygame.draw.line(self.screen, (150, 150, 255), (255, 152), (545, 152), 1)
+
+        items = inventory.all_items()
+        if not items:
+            empty = self.font.render("Nenhum item coletado.", True, (180, 180, 180))
+            self.screen.blit(empty, (268, 170))
+        else:
+            counts = {}
+            for item in items:
+                counts[item] = counts.get(item, 0) + 1
+            y = 165
+            for i, (name, count) in enumerate(counts.items()):
+                color = (255, 255, 255) if i % 2 == 0 else (180, 255, 180)
+                item_text = self.font.render(f">> {name}   x{count}", True, color)
+                self.screen.blit(item_text, (272, y))
+                y += 34
+
+        close = self.font.render("Pressione L para fechar", True, (150, 150, 200))
+        self.screen.blit(close, (262, 438))

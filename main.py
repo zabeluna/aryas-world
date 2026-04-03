@@ -20,7 +20,7 @@ def main():
     clock = pygame.time.Clock()
 
     game_map = GameMap("data/map.json")
-    player = Player(x=100, y=100)
+    player = Player(x=48, y=140)
     inventory = Inventory()
     hud = HUD(screen)
 
@@ -34,20 +34,19 @@ def main():
         NPC(x=600, y=450, dialogue_id="person_1"),
     ]
 
-    sticks = [  # Galhos coletáveis
+    sticks = [
         pygame.Rect(150, 150, 16, 16),
         pygame.Rect(350, 300, 16, 16),
         pygame.Rect(500, 200, 16, 16),
     ]
 
-    target_pos = None  # Destino do clique do mouse
-    path = []          # Caminho calculado pelo A*
+    target_pos = None
+    path = []
 
     running = True
     while running:
         dt = clock.tick(FPS) / 1000.0
 
-        # ── Eventos ──────────────────────────────────────────────
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -55,7 +54,6 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mx, my = pygame.mouse.get_pos()
                 target_pos = (mx, my)
-                # Calcula rota com A*
                 start = (int(player.rect.centerx // game_map.tile_size),
                          int(player.rect.centery // game_map.tile_size))
                 goal  = (int(mx // game_map.tile_size),
@@ -64,7 +62,7 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 if event.key in (pygame.K_SPACE, pygame.K_LSHIFT):
-                    player.use_skill()  # Skill de desvio
+                    player.use_skill()
 
             # Interação com NPC
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
@@ -72,11 +70,13 @@ def main():
                     if player.rect.colliderect(npc.rect.inflate(40, 40)):
                         npc.start_dialogue(screen)
 
-        # ── Update ───────────────────────────────────────────────
+            # Abrir/fechar inventário
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_l:
+                hud.toggle_inventory()
+
         keys = pygame.key.get_pressed()
         player.update(dt, keys, game_map, path)
 
-        # Limpa path se player chegou ao destino
         if path and player.reached_waypoint():
             path.pop(0)
 
@@ -85,34 +85,30 @@ def main():
             if car.rect.colliderect(player.rect) and not player.is_dashing:
                 player.take_damage(10)
 
-        # Coleta de galhos
         for stick in sticks[:]:
             if player.rect.colliderect(stick):
                 inventory.add_item("Galho")
                 sticks.remove(stick)
 
-        # Condição de vitória (área da casa da vovó)
         grandma_area = pygame.Rect(720, 520, 60, 60)
         if player.rect.colliderect(grandma_area):
             victory_screen(screen, inventory.count("Galho"))
             running = False
 
-        # Morte
         if player.hp <= 0:
             death_screen(screen)
             running = False
 
-        # ── Draw ─────────────────────────────────────────────────
-        screen.fill((80, 140, 80))  # Fundo verde (grama)
+        screen.fill((80, 140, 80))
         game_map.draw(screen)
 
         for stick in sticks:
-            pygame.draw.rect(screen, (139, 90, 43), stick)  # Galho marrom
+            pygame.draw.rect(screen, (139, 90, 43), stick)
 
         grandma_house = pygame.Rect(720, 520, 60, 60)
         pygame.draw.rect(screen, (255, 200, 100), grandma_house)
         font = pygame.font.SysFont(None, 18)
-        screen.blit(font.render("Vovó", True, (0,0,0)), (728, 545))
+        screen.blit(font.render("Vovo", True, (0,0,0)), (728, 545))
 
         for car in cars:
             car.draw(screen)
@@ -132,7 +128,7 @@ def victory_screen(screen, sticks_count):
     screen.fill((255, 230, 100))
     font = pygame.font.SysFont(None, 64)
     small = pygame.font.SysFont(None, 36)
-    screen.blit(font.render("🐶 Arya chegou!", True, (80, 40, 0)), (160, 200))
+    screen.blit(font.render("Arya chegou!", True, (80, 40, 0)), (160, 200))
     screen.blit(small.render(f"Galhos coletados: {sticks_count}", True, (80, 40, 0)), (270, 290))
     pygame.display.flip()
     pygame.time.wait(3000)

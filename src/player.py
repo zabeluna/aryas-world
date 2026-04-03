@@ -9,9 +9,11 @@ DASH_COOLDOWN = 1.5
 class Player:
     def __init__(self, x, y):
         self.rect = pygame.Rect(x, y, 32, 32)
+        self.fx = float(x)  # posição float acumulada
+        self.fy = float(y)
         self.hp = 100
         self.max_hp = 100
-        self.color = (255, 180, 50)  # Amarelo cachorro
+        self.color = (255, 180, 50)
 
         self.dash_timer = 0.0
         self.dash_cooldown_timer = 0.0
@@ -59,12 +61,17 @@ class Player:
                 self._move(nx * SPEED * dt, ny * SPEED * dt, game_map)
 
     def _move(self, dx, dy, game_map):
-        self.rect.x += int(dx)
+        self.fx += dx
+        self.rect.x = int(self.fx)
         if game_map.collides(self.rect):
-            self.rect.x -= int(dx)
-        self.rect.y += int(dy)
+            self.rect.x -= int(dx) if int(dx) != 0 else 0
+            self.fx = float(self.rect.x)
+
+        self.fy += dy
+        self.rect.y = int(self.fy)
         if game_map.collides(self.rect):
-            self.rect.y -= int(dy)
+            self.rect.y -= int(dy) if int(dy) != 0 else 0
+            self.fy = float(self.rect.y)
 
     def use_skill(self):
         if self.dash_cooldown_timer <= 0 and not self.is_dashing:
