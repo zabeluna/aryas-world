@@ -3,7 +3,7 @@
 ## 1. História do Jogo
 
 **Arya** é uma cachorra corajosa que precisa atravessar a cidade para chegar à casa da sua vovó.
-O caminho é cheio de ruas movimentadas, carros perigosos e distrações. Mas Arya não desiste —
+O caminho é cheio de ruas movimentadas, carros perigosos e distrações. Mas Arya não desiste,
 ela coleta galhos pelo caminho (seu brinquedo favorito!), conversa com pessoas e outros cães
 que encontra, e usa sua esperteza para desviar dos carros e chegar em segurança.
 
