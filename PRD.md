@@ -45,7 +45,7 @@ o trânsito caótico da cidade.
 - Possui cooldown para não ser usada infinitamente.
 - Permite desviar rapidamente dos carros e ajustar a rota.
 
-### RF04 — Monstros (Carros)
+### RF04 — Carros
 - Carros percorrem rotas fixas nas ruas (patrulha).
 - Funcionam como obstáculos móveis para leitura de rota e desvio.
 - Não causam dano nem encerram a fase por colisão.
@@ -73,6 +73,7 @@ o trânsito caótico da cidade.
 ### RF09 — HUD
 - Contador de galhos coletados.
 - Indicador de cooldown da skill.
+- Estado da visualização da rota TSP.
 
 ---
 
@@ -85,6 +86,15 @@ o trânsito caótico da cidade.
 
 ### RNF02 — Performance
 - Rodar a no mínimo 30 FPS em hardware comum.
+
+### RNF03 — Arte 2D
+- Arya usa a imagem `arya.png` como sprite principal.
+- O cenário deve ter leitura visual 2D clara, com ruas, prédios, casa da vovó, carros e coletáveis desenhados.
+- O dash deve ter feedback visual.
+
+### RNF04 — Organização do Código
+- Estrutura modular por pastas.
+- Cada sistema deve ficar em seu próprio arquivo.
 
 ## 5. Algoritmos Computacionais
 
