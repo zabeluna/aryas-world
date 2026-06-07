@@ -6,6 +6,7 @@ from src.monster import Car
 from src.npc import NPC
 from src.inventory import Inventory
 from src.pathfinding import astar
+from src.tsp import solve_tsp
 from src.map import GameMap
 from src.hud import HUD
 
@@ -42,6 +43,7 @@ def main():
 
     target_pos = None
     path = []
+    show_tsp_route = True
 
     running = True
     while running:
@@ -74,6 +76,10 @@ def main():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_l:
                 hud.toggle_inventory()
 
+            # Mostrar/ocultar rota TSP dos galhos restantes
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                show_tsp_route = not show_tsp_route
+
         keys = pygame.key.get_pressed()
         player.update(dt, keys, game_map, path)
 
@@ -82,8 +88,6 @@ def main():
 
         for car in cars:
             car.update(dt)
-            if car.rect.colliderect(player.rect) and not player.is_dashing:
-                player.take_damage(10)
 
         for stick in sticks[:]:
             if player.rect.colliderect(stick):
@@ -95,33 +99,89 @@ def main():
             victory_screen(screen, inventory.count("Galho"))
             running = False
 
-        if player.hp <= 0:
-            death_screen(screen)
-            running = False
-
-        screen.fill((80, 140, 80))
         game_map.draw(screen)
 
         for stick in sticks:
-            pygame.draw.rect(screen, (139, 90, 43), stick)
+            draw_stick(screen, stick)
 
         grandma_house = pygame.Rect(720, 520, 60, 60)
-        pygame.draw.rect(screen, (255, 200, 100), grandma_house)
-        font = pygame.font.SysFont(None, 18)
-        screen.blit(font.render("Vovo", True, (0,0,0)), (728, 545))
+        draw_grandma_house(screen, grandma_house)
 
         for car in cars:
             car.draw(screen)
         for npc in npcs:
             npc.draw(screen)
 
+        if show_tsp_route:
+            draw_tsp_route(screen, player, sticks)
+
         player.draw(screen)
-        hud.draw(player, inventory)
+        hud.draw(player, inventory, show_tsp_route)
 
         pygame.display.flip()
 
     pygame.quit()
     sys.exit()
+
+
+def draw_tsp_route(screen, player, sticks):
+    if not sticks:
+        return
+
+    points = [player.rect.center] + [stick.center for stick in sticks]
+    route, distance = solve_tsp(points, return_to_start=False)
+    route_points = [points[index] for index in route]
+
+    if len(route_points) >= 2:
+        pygame.draw.lines(screen, (255, 245, 120), False, route_points, 3)
+
+    font = pygame.font.SysFont(None, 20)
+    for order, point in enumerate(route_points[1:], start=1):
+        pygame.draw.circle(screen, (255, 245, 120), point, 11, 2)
+        label = font.render(str(order), True, (30, 30, 30))
+        screen.blit(label, (point[0] - 5, point[1] - 7))
+
+    distance_label = font.render(f"TSP rota: {distance:.0f}px", True, (255, 245, 120))
+    screen.blit(distance_label, (10, 104))
+
+
+def draw_stick(screen, rect):
+    start = (rect.left + 2, rect.centery + 4)
+    end = (rect.right - 2, rect.centery - 4)
+    pygame.draw.line(screen, (92, 54, 28), start, end, 5)
+    pygame.draw.line(screen, (145, 91, 48), start, end, 2)
+    pygame.draw.line(screen, (92, 54, 28), rect.center, (rect.right, rect.top + 2), 3)
+    pygame.draw.circle(screen, (255, 234, 132), rect.center, 10, 1)
+
+
+def draw_grandma_house(screen, rect):
+    shadow = pygame.Rect(rect.x + 4, rect.y + 6, rect.width, rect.height)
+    pygame.draw.rect(screen, (70, 72, 70), shadow, border_radius=4)
+
+    roof_points = [
+        (rect.left - 6, rect.top + 20),
+        (rect.centerx, rect.top - 8),
+        (rect.right + 6, rect.top + 20),
+    ]
+    pygame.draw.polygon(screen, (168, 72, 58), roof_points)
+    pygame.draw.polygon(screen, (109, 48, 45), roof_points, 2)
+
+    body = pygame.Rect(rect.x, rect.y + 18, rect.width, rect.height - 12)
+    pygame.draw.rect(screen, (252, 214, 144), body, border_radius=5)
+    pygame.draw.rect(screen, (140, 98, 66), body, 2, border_radius=5)
+
+    door = pygame.Rect(rect.centerx - 8, rect.bottom - 24, 16, 24)
+    pygame.draw.rect(screen, (112, 77, 48), door, border_radius=3)
+    pygame.draw.circle(screen, (245, 220, 115), (door.right - 4, door.centery), 2)
+
+    for wx in (rect.x + 8, rect.right - 20):
+        window = pygame.Rect(wx, rect.y + 30, 14, 12)
+        pygame.draw.rect(screen, (155, 213, 235), window, border_radius=2)
+        pygame.draw.rect(screen, (88, 126, 150), window, 1, border_radius=2)
+
+    font = pygame.font.SysFont(None, 17)
+    label = font.render("Vovo", True, (76, 48, 32))
+    screen.blit(label, (rect.x + 15, rect.y + 21))
 
 
 def victory_screen(screen, sticks_count):
@@ -132,14 +192,6 @@ def victory_screen(screen, sticks_count):
     screen.blit(small.render(f"Galhos coletados: {sticks_count}", True, (80, 40, 0)), (270, 290))
     pygame.display.flip()
     pygame.time.wait(3000)
-
-
-def death_screen(screen):
-    screen.fill((40, 0, 0))
-    font = pygame.font.SysFont(None, 64)
-    screen.blit(font.render("Arya foi atropelada...", True, (255, 80, 80)), (80, 260))
-    pygame.display.flip()
-    pygame.time.wait(2500)
 
 
 if __name__ == "__main__":

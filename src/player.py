@@ -1,4 +1,4 @@
-# src/player.py
+import os
 import pygame
 
 SPEED = 180
@@ -11,9 +11,10 @@ class Player:
         self.rect = pygame.Rect(x, y, 32, 32)
         self.fx = float(x)  # posição float acumulada
         self.fy = float(y)
-        self.hp = 100
-        self.max_hp = 100
         self.color = (255, 180, 50)
+        self.facing_left = False
+        self.sprite = self._load_sprite()
+        self.sprite_left = pygame.transform.flip(self.sprite, True, False) if self.sprite else None
 
         self.dash_timer = 0.0
         self.dash_cooldown_timer = 0.0
@@ -43,6 +44,8 @@ class Player:
 
         if vx != 0 or vy != 0:
             self.dash_dir = (vx, vy)
+            if vx != 0:
+                self.facing_left = vx < 0
             self._move(vx * SPEED * dt, vy * SPEED * dt, game_map)
             path.clear()
         elif path:
@@ -58,7 +61,18 @@ class Player:
             else:
                 nx, ny = dx/dist, dy/dist
                 self.dash_dir = (nx, ny)
+                if abs(nx) > 0.1:
+                    self.facing_left = nx < 0
                 self._move(nx * SPEED * dt, ny * SPEED * dt, game_map)
+
+    def _load_sprite(self):
+        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        sprite_path = os.path.join(root_dir, "arya.png")
+        try:
+            image = pygame.image.load(sprite_path).convert_alpha()
+        except pygame.error:
+            return None
+        return pygame.transform.smoothscale(image, (50, 34))
 
     def _move(self, dx, dy, game_map):
         self.fx += dx
@@ -79,13 +93,20 @@ class Player:
             self.dash_timer = DASH_DURATION
             self.dash_cooldown_timer = DASH_COOLDOWN
 
-    def take_damage(self, amount):
-        self.hp = max(0, self.hp - amount)
-
     def reached_waypoint(self):
         return False  # Gerenciado no main
 
     def draw(self, screen):
+        if self.sprite:
+            sprite = self.sprite_left if self.facing_left else self.sprite
+            draw_rect = sprite.get_rect(midbottom=self.rect.midbottom)
+            if self.is_dashing:
+                glow = pygame.Surface((draw_rect.width + 10, draw_rect.height + 10), pygame.SRCALPHA)
+                pygame.draw.ellipse(glow, (255, 245, 120, 90), glow.get_rect())
+                screen.blit(glow, (draw_rect.x - 5, draw_rect.y - 5))
+            screen.blit(sprite, draw_rect)
+            return
+
         color = (255, 100, 100) if self.is_dashing else self.color
         pygame.draw.ellipse(screen, color, self.rect)
         # Orelhas

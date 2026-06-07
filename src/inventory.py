@@ -8,6 +8,15 @@ class Inventory:
         self._items.append(name)
         self._items = self._quicksort(self._items)
 
+    def remove_item(self, name: str) -> bool:
+        if name not in self._items:
+            return False
+        self._items.remove(name)
+        return True
+
+    def has_item(self, name: str) -> bool:
+        return name in self._items
+
     def count(self, name: str) -> int:
         return self._items.count(name)
 

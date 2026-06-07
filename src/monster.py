@@ -25,11 +25,19 @@ class Car:
             self.rect.y += int(ny * CAR_SPEED * dt)
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect, border_radius=4)
-        # Janelas
-        win = pygame.Rect(self.rect.x + 6, self.rect.y + 4, 14, 10)
-        pygame.draw.rect(screen, (180, 220, 255), win, border_radius=2)
-        # Rodas
-        for wx in [self.rect.x + 4, self.rect.right - 14]:
-            pygame.draw.circle(screen, (30, 30, 30),
-                               (wx + 5, self.rect.bottom + 2), 5)
+        shadow = pygame.Rect(self.rect.x + 3, self.rect.y + 4, self.rect.width, self.rect.height)
+        pygame.draw.rect(screen, (48, 48, 52), shadow, border_radius=7)
+
+        pygame.draw.rect(screen, self.color, self.rect, border_radius=7)
+        pygame.draw.rect(screen, (130, 30, 35), self.rect, 2, border_radius=7)
+
+        cabin = pygame.Rect(self.rect.x + 12, self.rect.y + 3, 24, 11)
+        pygame.draw.rect(screen, (180, 220, 255), cabin, border_radius=3)
+        pygame.draw.line(screen, (85, 120, 150), cabin.center, (cabin.centerx, cabin.bottom), 1)
+
+        pygame.draw.circle(screen, (255, 235, 120), (self.rect.right - 4, self.rect.y + 8), 3)
+        pygame.draw.circle(screen, (255, 120, 100), (self.rect.left + 4, self.rect.y + 8), 3)
+
+        for wx in [self.rect.x + 6, self.rect.right - 16]:
+            pygame.draw.circle(screen, (24, 24, 26), (wx + 5, self.rect.bottom), 5)
+            pygame.draw.circle(screen, (105, 105, 110), (wx + 5, self.rect.bottom), 2)
