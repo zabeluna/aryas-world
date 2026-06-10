@@ -49,11 +49,13 @@ o trânsito caótico da cidade.
 - Carros percorrem rotas fixas nas ruas (patrulha).
 - Funcionam como obstáculos móveis para leitura de rota e desvio.
 - Não causam dano nem encerram a fase por colisão.
+- Podem ser atingidos por galhos arremessados, ficando parados temporariamente.
 
 ### RF05 — Itens Coletáveis (Galhos)
 - Galhos estão espalhados pelo mapa.
 - Arya coleta ao passar por cima.
 - Os galhos são armazenados no inventário.
+- Galhos coletados podem ser consumidos como projéteis contra carros.
 
 ### RF06 — Inventário
 - Exibe os galhos coletados.
@@ -74,6 +76,7 @@ o trânsito caótico da cidade.
 - Contador de galhos coletados.
 - Indicador de cooldown da skill.
 - Estado da visualização da rota TSP.
+- Dica do controle para arremessar galhos.
 
 ---
 

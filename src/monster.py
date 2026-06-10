@@ -2,6 +2,7 @@
 import pygame
 
 CAR_SPEED = 120
+CAR_STUN_DURATION = 2.0
 
 class Car:
     def __init__(self, x, y, route):
@@ -9,8 +10,13 @@ class Car:
         self.route = route        # Lista de (x, y) waypoints
         self.route_index = 0
         self.color = (220, 50, 50)
+        self.stun_timer = 0.0
 
     def update(self, dt):
+        self.stun_timer = max(0, self.stun_timer - dt)
+        if self.stun_timer > 0:
+            return
+
         if not self.route:
             return
         tx, ty = self.route[self.route_index]
@@ -24,11 +30,15 @@ class Car:
             self.rect.x += int(nx * CAR_SPEED * dt)
             self.rect.y += int(ny * CAR_SPEED * dt)
 
+    def hit_by_stick(self):
+        self.stun_timer = CAR_STUN_DURATION
+
     def draw(self, screen):
         shadow = pygame.Rect(self.rect.x + 3, self.rect.y + 4, self.rect.width, self.rect.height)
         pygame.draw.rect(screen, (48, 48, 52), shadow, border_radius=7)
 
-        pygame.draw.rect(screen, self.color, self.rect, border_radius=7)
+        body_color = (95, 105, 115) if self.stun_timer > 0 else self.color
+        pygame.draw.rect(screen, body_color, self.rect, border_radius=7)
         pygame.draw.rect(screen, (130, 30, 35), self.rect, 2, border_radius=7)
 
         cabin = pygame.Rect(self.rect.x + 12, self.rect.y + 3, 24, 11)
@@ -41,3 +51,8 @@ class Car:
         for wx in [self.rect.x + 6, self.rect.right - 16]:
             pygame.draw.circle(screen, (24, 24, 26), (wx + 5, self.rect.bottom), 5)
             pygame.draw.circle(screen, (105, 105, 110), (wx + 5, self.rect.bottom), 2)
+
+        if self.stun_timer > 0:
+            font = pygame.font.SysFont(None, 18)
+            label = font.render("PARE", True, (255, 245, 120))
+            screen.blit(label, (self.rect.centerx - 18, self.rect.y - 16))

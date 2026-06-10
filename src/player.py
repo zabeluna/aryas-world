@@ -93,6 +93,12 @@ class Player:
             self.dash_timer = DASH_DURATION
             self.dash_cooldown_timer = DASH_COOLDOWN
 
+    def throw_direction(self):
+        dx, dy = self.dash_dir
+        if dx == 0 and dy == 0:
+            return (-1, 0) if self.facing_left else (1, 0)
+        return (dx, dy)
+
     def reached_waypoint(self):
         return False  # Gerenciado no main
 

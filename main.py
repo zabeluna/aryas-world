@@ -9,6 +9,7 @@ from src.pathfinding import astar
 from src.tsp import solve_tsp
 from src.map import GameMap
 from src.hud import HUD
+from src.projectile import StickProjectile
 
 WIDTH, HEIGHT = 800, 600
 FPS = 60
@@ -44,6 +45,7 @@ def main():
     target_pos = None
     path = []
     show_tsp_route = True
+    stick_projectiles = []
 
     running = True
     while running:
@@ -65,6 +67,14 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key in (pygame.K_SPACE, pygame.K_LSHIFT):
                     player.use_skill()
+                if event.key == pygame.K_f and inventory.remove_item("Galho"):
+                    stick_projectiles.append(
+                        StickProjectile(
+                            player.rect.centerx,
+                            player.rect.centery,
+                            player.throw_direction(),
+                        )
+                    )
 
             # Interação com NPC
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
@@ -89,6 +99,21 @@ def main():
         for car in cars:
             car.update(dt)
 
+        screen_bounds = pygame.Rect(0, 0, WIDTH, HEIGHT)
+        for projectile in stick_projectiles[:]:
+            projectile.update(dt)
+            hit_car = None
+            for car in cars:
+                if projectile.rect.colliderect(car.rect):
+                    hit_car = car
+                    break
+
+            if hit_car:
+                hit_car.hit_by_stick()
+                stick_projectiles.remove(projectile)
+            elif projectile.is_expired(screen_bounds):
+                stick_projectiles.remove(projectile)
+
         for stick in sticks[:]:
             if player.rect.colliderect(stick):
                 inventory.add_item("Galho")
@@ -109,6 +134,8 @@ def main():
 
         for car in cars:
             car.draw(screen)
+        for projectile in stick_projectiles:
+            projectile.draw(screen)
         for npc in npcs:
             npc.draw(screen)
 

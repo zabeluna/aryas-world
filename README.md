@@ -14,6 +14,7 @@ python main.py
 - `WASD` ou setas: mover Arya
 - Clique esquerdo: mover ate um ponto usando A*
 - `Espaco` ou `Shift`: desvio rapido
+- `F`: arremessar um galho coletado para parar um carro por alguns segundos
 - `L`: abrir/fechar inventario
 - `R`: mostrar/ocultar rota TSP dos galhos restantes
 - `E`: conversar com NPC proximo

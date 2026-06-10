@@ -38,6 +38,10 @@ class HUD:
         tsp_hint = self.font.render(f"[R] Rota TSP: {tsp_status}", True, (255, 245, 120))
         self.screen.blit(tsp_hint, (10, 82))
 
+        throw_color = (255, 245, 120) if sticks > 0 else (130, 130, 130)
+        throw_hint = self.font.render("[F] Arremessar galho", True, throw_color)
+        self.screen.blit(throw_hint, (10, 128))
+
         # ── Tela de inventário ───────────────────────────────────
         if self.show_inventory:
             self._draw_inventory(inventory)
